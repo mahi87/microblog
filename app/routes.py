@@ -23,8 +23,11 @@ def index():
         db.session.commit()
         return redirect(url_for('index'))
     
-    posts = current_user.followed_posts().all()
-    return render_template('index.html',title='Home', posts=posts, form=form)
+    page=request.args.get('page', 1, type=int)
+    posts = current_user.followed_posts().paginate(
+        page=page, per_page=app.config['POSTS_PER_PAGE'], error_out=False
+    )
+    return render_template('index.html',title='Home', posts=posts.items, form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -132,5 +135,8 @@ def unfollow(username):
     
 @app.route('/explore')
 def explore():
-    posts = Post.query.order_by(Post.timestamp.desc()).all()
-    return render_template('index.html', posts=posts, title='Explore')
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page=page, per_page=app.config['POSTS_PER_PAGE'], error_out=False
+    )
+    return render_template('index.html', posts=posts.items, title='Explore')

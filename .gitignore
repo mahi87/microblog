@@ -2,3 +2,5 @@
 __pychache__
 .flaskenv
 *.pyc
+/logs
+app.db

@@ -130,3 +130,7 @@ def unfollow(username):
         return redirect(url_for('user', username=username))
     return redirect(url_for('index'))
     
+@app.route('/explore')
+def explore():
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template('index.html', posts=posts, title='Explore')

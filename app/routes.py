@@ -27,7 +27,9 @@ def index():
     posts = current_user.followed_posts().paginate(
         page=page, per_page=app.config['POSTS_PER_PAGE'], error_out=False
     )
-    return render_template('index.html',title='Home', posts=posts.items, form=form)
+    next_url = url_for('index', page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('index', page=posts.prev_num) if posts.has_prev else None 
+    return render_template('index.html',title='Home', posts=posts.items, form=form, next_url=next_url, prev_url=prev_url)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -139,4 +141,6 @@ def explore():
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page=page, per_page=app.config['POSTS_PER_PAGE'], error_out=False
     )
-    return render_template('index.html', posts=posts.items, title='Explore')
+    next_url = url_for('explore', page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('explore', page=posts.prev_num) if posts.has_prev else None
+    return render_template('index.html', posts=posts.items, title='Explore', next_url=next_url, prev_url=prev_url)
